@@ -218,6 +218,7 @@ Base.prototype.createSchedules = function(dataList, silent) {
 Base.prototype.updateSchedule = function(schedule, options) {
     var start = options.start || schedule.start;
     var end = options.end || schedule.end;
+    var modelID = util.stamp(schedule);
 
     options = options ? sanitizeOptions(options) : {};
 
@@ -307,6 +308,20 @@ Base.prototype.updateSchedule = function(schedule, options) {
 
     this._removeFromMatrix(schedule);
     this._addToMatrix(schedule);
+
+    util.forEach(
+        this.dateMatrix,
+        function(matrix) {
+            var index = util.inArray(modelID, matrix);
+
+            if (~index) {
+                matrix[index] = schedule;
+            }
+        },
+        this
+    );
+
+    console.log('test');
 
     /**
      * @event Base#updateSchedule
